@@ -1,0 +1,28 @@
+[lightning]
+# Logging
+file = "/tmp/tidb-lightning.log"
+level = "info"
+
+[tikv-importer]
+# Uses the Local-backend
+backend = "local"
+# Sets the directory for temporarily storing the sorted key-value pairs.
+# The target directory must be empty.
+sorted-kv-dir = "/tmp/sst"
+
+[mydumper]
+# Local source data directory
+data-source-dir = "/tmp/dumpling"
+
+# Configures the wildcard rule. By default, all tables in the mysql, sys, INFORMATION_SCHEMA, PERFORMANCE_SCHEMA, METRICS_SCHEMA, and INSPECTION_SCHEMA system databases are filtered.
+# If this item is not configured, the "cannot find schema" error occurs when system tables are imported.
+filter = ['*.*', '!mysql.*', '!sys.*', '!INFORMATION_SCHEMA.*', '!PERFORMANCE_SCHEMA.*', '!METRICS_SCHEMA.*', '!INSPECTION_SCHEMA.*']
+[tidb]
+# Information of the target cluster
+host = "127.0.0.1"
+port = 4000
+user = "root"
+# Table schema information is fetched from TiDB via this status-port.
+status-port = 10080
+# The PD address of the cluster
+pd-addr = "127.0.0.1:2379"

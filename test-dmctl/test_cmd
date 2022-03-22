@@ -1,0 +1,115 @@
+# [label] one source for all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 --all-task
+
+# [label] multi source for all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1,source2 --all-task
+
+# [label] one source for one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname
+
+# [label] multi source for one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1,source2 taskname
+
+# [label] no source for one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname
+
+# [label] no source for all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 --all-task
+
+# [label] --all-task and taskname conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1,source2 taskname --all-task
+
+# [label] --all-task and taskname conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname --all-task
+
+# [label] --all-task and taskname conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start taskname --all-task
+
+# [label] specify mode for one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname --mode full
+
+# [label] specify mode for one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname --mode fast
+
+# [label] unrecognized mode: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation start -s source1 taskname --mode gg
+
+# [label] stop all task for one source: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop -s source1 --all-task
+
+# [label] stop all task for multi source: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop -s source1,source2 --all-task
+
+# [label] stop one task for one source: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop -s source1 taskname
+
+# [label] stop one task for multi source: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop -s source1,source2 taskname
+
+# [label] stop all task and one task: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop taskname --all-task
+
+# [label] no taskname specified: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation stop -s source1,source2
+
+# [label] query task name without filter: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation status taskname
+
+# [label] query task name with filter: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation status taskname --stage Running
+
+# [label] query without task name: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation status --stage Stopped
+
+# [label] query without stage: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation status taskname
+
+# [label] show error of one task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation show-errors taskname
+
+# [label] show error with no task name: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation show-errors --error=all
+
+# [label] show all error: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation show-errors taskname --error=all
+# [label] show ignored error: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation show-errors taskname --error=ignored
+
+# [label] no task name: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation show-errors --error=all
+
+# [label] ignore error with id: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation ignore-error taskname 100
+
+# [label] ignore error all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation ignore-error taskname --all
+
+# [label] id and all conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation ignore-error taskname 100 --all
+
+# [label] no task name: failure (error-id shouldn't be set, otherwise the id is treated as taskname)
+./bin/dmctl --master-addr 127.0.0.1:8261 validation ignore-error
+
+# [label] resolve error with id: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation make-resolve taskname 100
+
+# [label] resolve error all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation make-resolve taskname --all
+
+# [label] id and all conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation make-resolve taskname 100 --all
+
+# [label] no task name: failure (error-id shouldn't be set, otherwise the id is treated as taskname)
+./bin/dmctl --master-addr 127.0.0.1:8261 validation make-resolve --all
+
+# [label] clear error with id: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation clear taskname 100
+
+# [label] clear error all task: success
+./bin/dmctl --master-addr 127.0.0.1:8261 validation clear taskname --all
+
+# [label] id and all conflict: failure
+./bin/dmctl --master-addr 127.0.0.1:8261 validation clear taskname 100 --all
+
+# [label] no task name: failure (error-id shouldn't be set, otherwise the id is treated as taskname)
+./bin/dmctl --master-addr 127.0.0.1:8261 validation clear --all

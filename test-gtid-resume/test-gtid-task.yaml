@@ -1,0 +1,19 @@
+---
+name: testgtid
+task-mode: all
+
+target-database:
+  host: "127.0.0.1"
+  port: 4000
+  user: root
+  
+
+mysql-instances:
+  - source-id: "test-gtid-mysql"
+    syncer:
+      safe-mode: true
+    block-allow-list: "rule1"
+
+block-allow-list:
+  rule1:
+    do-dbs: ["testsh"]

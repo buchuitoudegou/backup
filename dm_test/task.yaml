@@ -1,0 +1,22 @@
+---
+name: test_topsql
+task-mode: all
+
+target-database:
+  host: "127.0.0.1"
+  port: 4000
+  user: "root"
+
+mysql-instances:
+  - source-id: "mysql1"
+    block-allow-list: "instance"
+    loader-config-name: "global"
+
+block-allow-list:
+  instance:
+    do-dbs: ["test_dm"]
+
+loaders:
+  global:
+    pool-size: 16
+    import-mode: "sql"
