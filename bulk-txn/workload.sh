@@ -29,15 +29,17 @@ function lightning_workload() {
         primary key(a) \
     );"
     insert_sql="insert into test_lightning_topsql.test values"
-    for (( i=0; i < 10000; ++i )) do
+    for (( i=0; i < 100000; ++i )) do
         if [ $i != "0" ]
         then
-            insert_sql="$insert_sql,"
+            insert_sql+=","
         fi
         a="$i"
         b="'sometext_$i'"
-        insert_sql="$insert_sql ($a, $b)"
+        insert_sql+=" ($a, $b)"
     done
+    echo "start inserting..."
+    echo "$insert_sql"
     mysql_exec $insert_sql
 }
 $1

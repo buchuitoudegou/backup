@@ -30,12 +30,12 @@ function cleanup() {
 }
 
 function cleanup_tidb() {
-    ps -ef |grep 'tidb-server'|awk '{print $2}'| xargs -I{} kill {}
+    ps -ef | grep 'tidb-server' | grep -v grep | awk '{print $2}' | xargs kill -9
     sleep 2
-    ps -ef |grep 'tikv-server'|awk '{print $2}'| xargs -I{} kill {}
+    ps -ef | grep 'tikv-server' | grep -v grep | awk '{print $2}' | xargs kill -9
     sleep 2
     rm -rf /tmp/tikv1
-    ps -ef |grep 'pd-server'|awk '{print $2}'| xargs -I{} kill {}
+    ps -ef | grep 'pd-server' | grep -v grep | awk '{print $2}' | xargs kill -9
     sleep 2
     rm -rf pd
 }

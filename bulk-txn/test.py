@@ -48,6 +48,7 @@ def test_mysql_insert(conn):
                 sql += "(%s, %s)"
                 args.append(i)
                 args.append(gen_rand_str(30))
+            print("inserting...")
             cursor.execute(sql, args)
             conn.commit()
 
@@ -60,8 +61,11 @@ def cleanup_data(conn, db):
             conn.commit()
 
 
-conn = pymysql.connect(host="localhost", user="root", database="test_backup", port=4000)
+# conn = pymysql.connect(host="localhost", user="root", database="test_backup", port=4000)
 
+conn = pymysql.connect(
+    host="localhost", user="root", database="test_lightning_topsql", port=4000
+)
 # conn = pymysql.connect(
 #     host="localhost",
 #     user="root",
