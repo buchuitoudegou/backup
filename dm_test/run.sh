@@ -1,6 +1,10 @@
 master_log=/tmp/dm-master.log
 worker1_log=/tmp/dm-worker1.log
-myipv4=$(ifconfig | grep "inet 192.* broadcast.*" | cut -d" " -f2)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    myipv4=$(hostname -I|sed 's/.$//')
+else
+    myipv4=$(ifconfig | grep "inet 192.* broadcast.*" | cut -d" " -f2)
+fi
 set -x
 function start_dm() {
     master_flags="--master-addr=127.0.0.1:8261 --log-file=$master_log --name=master1 --data-dir=$dm_master_data_dir"
