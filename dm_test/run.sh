@@ -1,7 +1,7 @@
 master_log=/tmp/dm-master.log
 worker1_log=/tmp/dm-worker1.log
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    myipv4=$(hostname -I|sed 's/.$//')
+    myipv4=$(hostname -I|sed 's/.$//'|cut -d" " -f1)
 else
     myipv4=$(ifconfig | grep "inet 192.* broadcast.*" | cut -d" " -f2)
 fi

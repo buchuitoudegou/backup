@@ -1,6 +1,10 @@
 import pymysql
 import random
 import string
+from multiprocessing import Process
+import copy
+
+cache = ""
 
 
 def test_tidb_topsql(conn):
@@ -26,31 +30,69 @@ def test_tidb_topsql(conn):
 
 
 def gen_rand_str(cnt=20):
-    ret = ""
-    for i in range(cnt):
-        ret += random.choice(string.ascii_letters)
-    return ret
+    global cache
+    ret = cache
+    if ret == "":
+        for i in range(cnt):
+            ret += random.choice(string.ascii_letters)
+        cache = ret
+        return ret
+    else:
+        change_idx = random.randint(0, cnt - 1)
+        ret = list(ret)
+        ret[change_idx] = random.choice(string.ascii_letters)
+        return "".join(ret)
 
 
 def test_mysql_insert(conn):
-    with conn:
-        with conn.cursor() as cursor:
-            sql = "create table if not exists test(\
-                a int,\
-                b varchar(50),\
-                primary key(a))"
-            cursor.execute(sql)
+    multi_procs = []
+    with conn.cursor() as cursor:
+        sql = "create table if not exists test(\
+            a int,\
+            b varchar(1000),\
+            primary key(a))"
+        cursor.execute(sql)
+        conn.commit()
+    sql = "insert into `test` values"
+    args = []
+    for i in range(count):
+        if len(args) != 0:
+            sql += ","
+        sql += "(%s, %s)"
+        args.append(i)
+        args.append(gen_rand_str(999))
+        if i > 0 and i % 100000 == 0:
+            print(f"inserting {i}...")
+
+            def exec_sql(sql, args):
+                conn = pymysql.connect(
+                    host="localhost",
+                    user="root",
+                    database="test_lightning_topsql",
+                    port=4000,
+                )
+                cursor = conn.cursor()
+                cursor.execute(sql, args)
+                conn.commit()
+
+            p = Process(
+                target=exec_sql,
+                args=(
+                    sql,
+                    copy.deepcopy(args),
+                ),
+            )
+            p.start()
+            multi_procs.append(p)
             sql = "insert into `test` values"
             args = []
-            for i in range(count):
-                if i != 0:
-                    sql += ","
-                sql += "(%s, %s)"
-                args.append(i)
-                args.append(gen_rand_str(30))
-            print("inserting...")
-            cursor.execute(sql, args)
-            conn.commit()
+
+    if len(args) != 0:
+        cursor = conn.cursor()
+        cursor.execute(sql, args)
+        conn.commit()
+    for p in multi_procs:
+        p.join()
 
 
 def cleanup_data(conn, db):
@@ -74,6 +116,6 @@ conn = pymysql.connect(
 #     passwd="123456",
 # )
 
-count = 100000
+count = 10000000
 test_mysql_insert(conn)
 # cleanup_data(conn, "test_lightning_topsql")

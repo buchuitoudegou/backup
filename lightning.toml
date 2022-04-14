@@ -8,7 +8,11 @@ level = "info"
 backend = "local"
 # Sets the directory for temporarily storing the sorted key-value pairs.
 # The target directory must be empty.
+disk-quota = "20GB"
 sorted-kv-dir = "/tmp/sst"
+
+[checkpoint]
+enable = false
 
 [mydumper]
 # Local source data directory
@@ -26,3 +30,6 @@ user = "root"
 status-port = 10080
 # The PD address of the cluster
 pd-addr = "127.0.0.1:2379"
+
+[cron]
+check-disk-quota = "10s"
