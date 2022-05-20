@@ -49,7 +49,7 @@ function create_source() {
 }
 
 function start_task() {
-    bin/dmctl --master-addr=127.0.0.1:8261 start-task task.yaml
+    bin/dmctl --master-addr=127.0.0.1:8261 start-task task.yaml --remove-meta
 }
 
 function query_task() {
