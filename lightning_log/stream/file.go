@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"context"
 	"os"
 	"sync"
 
@@ -16,11 +15,10 @@ type FileStream struct {
 	source     chan string
 	fd         *os.File
 	processors []Processor
-	printer    *common.Printer
-	ctx        context.Context
+	ctx        *common.GlobalContext
 }
 
-func NewFileStream(ctx context.Context, p string, printer *common.Printer) DataStream {
+func NewFileStream(ctx *common.GlobalContext, p string) DataStream {
 	fd, err := os.Open(p)
 	if err != nil {
 		panic(err.Error())
@@ -31,12 +29,12 @@ func NewFileStream(ctx context.Context, p string, printer *common.Printer) DataS
 		sink:       make(chan string),
 		source:     make(chan string),
 		processors: make([]Processor, 0),
-		printer:    printer,
 		ctx:        ctx,
 	}
 }
 
 func (f *FileStream) Process(p Processor) {
+	p.Init()
 	f.processors = append(f.processors, p)
 }
 
@@ -77,7 +75,7 @@ func (f *FileStream) Execute() {
 				temp := str
 				// fmt.Printf("str: %s\n", str)
 				for _, p := range f.processors {
-					temp = p(temp)
+					temp = p.Process(temp)
 				}
 				// fmt.Printf("temp: %s, processors: %d\n", temp, len(f.processors))
 				if temp == "" {
@@ -113,12 +111,14 @@ func (f *FileStream) loadDiff() {
 }
 
 func (f *FileStream) Print() {
-	for {
-		select {
-		case ret := <-f.sink:
-			f.printer.Send("changes", ret)
-		case <-f.ctx.Done():
-			return
+	go func() {
+		for {
+			select {
+			case ret := <-f.sink:
+				f.ctx.Print("changes", ret)
+			case <-f.ctx.Done():
+				return
+			}
 		}
-	}
+	}()
 }

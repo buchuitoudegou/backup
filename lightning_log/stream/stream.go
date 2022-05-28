@@ -6,4 +6,8 @@ type DataStream interface {
 	Print()
 }
 
-type Processor = func(string) string
+// type Processor = func(string) string
+type Processor interface {
+	Process(string) string
+	Init()
+}
