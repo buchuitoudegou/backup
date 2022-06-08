@@ -1,0 +1,12 @@
+global:
+  user: "root"
+  ssh_port: 22
+  deploy_dir: "/tidb-deploy"
+  data_dir: "/tidb-data"
+server_configs: {}
+pd_servers:
+  - host: localipv4
+tidb_servers:
+  - host: localipv4
+tikv_servers:
+  - host: localipv4

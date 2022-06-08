@@ -1,0 +1,55 @@
+#全局变量适用于配置中的其他组件。如果组件实例中缺少一个特定值，则相应的全局变量将用作默认值。
+global:
+  user: "root"
+  ssh_port: 22
+  deploy_dir: "/dm-deploy"
+  data_dir: "/dm-data"
+
+server_configs:
+  master:
+    log-level: info
+    # rpc-timeout: "30s"
+    # rpc-rate-limit: 10.0
+    # rpc-rate-burst: 40
+  worker:
+    log-level: info
+
+master_servers:
+  - host: localipv4
+    name: master1
+    ssh_port: 22
+    port: 8261
+    # peer_port: 8291
+    # deploy_dir: "/dm-deploy/dm-master-8261"
+    # data_dir: "/dm-data/dm-master-8261"
+    # log_dir: "/dm-deploy/dm-master-8261/log"
+    # numa_node: "0,1"
+    # 下列配置项用于覆盖 `server_configs.master` 的值。
+    config:
+      log-level: info
+      # rpc-timeout: "30s"
+      # rpc-rate-limit: 10.0
+      # rpc-rate-burst: 40
+worker_servers:
+  - host: localipv4
+    ssh_port: 22
+    port: 8262
+    # deploy_dir: "/dm-deploy/dm-worker-8262"
+    # log_dir: "/dm-deploy/dm-worker-8262/log"
+    # numa_node: "0,1"
+    # 下列配置项用于覆盖 `server_configs.worker` 的值。
+    config:
+      log-level: info
+
+monitoring_servers:
+  - host: localipv4
+    ssh_port: 22
+    port: 9090
+    # deploy_dir: "/tidb-deploy/prometheus-8249"
+    # data_dir: "/tidb-data/prometheus-8249"
+    # log_dir: "/tidb-deploy/prometheus-8249/log"
+
+grafana_servers:
+  - host: localipv4
+    port: 3000
+    # deploy_dir: /tidb-deploy/grafana-3000
